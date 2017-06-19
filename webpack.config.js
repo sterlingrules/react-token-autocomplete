@@ -1,31 +1,56 @@
 var path = require('path');
-var webpackConf = require('peters-toolbelt').webpack;
+var webpack = require('webpack');
 
-var plugins = [];
-
-var conf = new webpackConf({
-                entry: './src',
-                output: {
-                    path: path.join(__dirname, '/dist'),
-                    filename: 'index.js',
-                    library: 'TokenAutocomplete',
-                    libraryTarget: 'umd'
-                },
-                resolve: {
-                  alias: {
-                    utils: path.join(__dirname, 'src/_utils')
-                  },
-                  modulesDirectories: ['node_modules']
-                },
-                plugins: plugins
-            })
-            .iNeedReact()
-            .iNeedWebFonts()
-            .iNeedSCSS()
-            .iNeedHotDevServer()
-            .getConfig();
-
-/*RegExp.prototype.toJSON = RegExp.prototype.toString;
-console.log('CURRENT CONFIG', JSON.stringify(conf, null, 4));*/
-
-module.exports = conf;
+module.exports = {
+	context: __dirname,
+	entry: './src/index.js',
+	output: {
+		path: __dirname + '/dist',
+		filename: 'index.js',
+		library: 'TokenAutocomplete',
+		libraryTarget: 'umd'
+	},
+	module: {
+		loaders: [
+			{
+				test: /\.jsx?$/,
+				loader: 'babel',
+				exclude: /node_modules/,
+				query: {
+					presets: [
+						'es2015',
+						'react',
+						'stage-2',
+					],
+					plugins: [
+						'transform-decorators-legacy'
+					]
+				}
+			}
+		]
+	},
+	externals: {
+		'react': 'React'
+	},
+	resolve: {
+		alias: {
+			utils: path.join(__dirname, 'src/_utils')
+		},
+		extensions: [
+			'',
+			'.js',
+			'.jsx'
+		],
+		modulesDirectories: [
+			'node_modules'
+		]
+	},
+	plugins: [
+		new webpack.optimize.DedupePlugin(),
+		new webpack.optimize.OccurenceOrderPlugin(),
+		new webpack.optimize.UglifyJsPlugin({
+			mangle: true,
+			sourcemap: false
+		})
+	]
+};

@@ -9,55 +9,52 @@ const {StyleDefaults} = decorators;
 @StyleDefaults(styles)
 export default class Token extends React.Component {
 
-  static displayName = 'Token';
+	static displayName = 'Token';
 
-  static propTypes = {
-    handleRemove: React.PropTypes.func,
-    index: React.PropTypes.number,
-    parse: React.PropTypes.func
-  }
+	static propTypes = {
+		handleRemove: React.PropTypes.func,
+		index: React.PropTypes.number,
+		parse: React.PropTypes.func
+	}
 
-  static defaultProps = {
-    handleRemove: noop,
-    parse: identity,
-    index: 0,
-    fullWidth: false
-  }
+	static defaultProps = {
+		handleRemove: noop,
+		parse: identity,
+		index: 0,
+		fullWidth: false
+	}
 
-  state = {
-  }
+	state = {}
 
-  onRemoveBtnClick = () => {
-    this.props.handleRemove(this.props.index);
-  }
+	onRemoveBtnClick = () => {
+		this.props.handleRemove(this.props.index);
+	}
 
-  parseLabel = value => {
+	parseLabel = value => {}
 
-  }
+	renderRemoveBtn = () => {
+		return (
+			<div
+				style={this.props.style.removeBtn}
+				ref={node => this.removeBtnEl = node}
+				className='token-remove-btn'
+				onClick={this.onRemoveBtnClick}>
+				x
+			</div>
+		);
+	}
 
-  renderRemoveBtn = () => {
-    return (
-      <div
-        style={this.props.style.removeBtn}
-        ref="removeBtn"
-        className='token-remove-btn'
-        onClick={this.onRemoveBtnClick}>
-        x
-      </div>
-    );
-  }
+	render() {
 
-  render() {
+		const {style} = this.props;
 
-    const {style} = this.props;
-
-    return (
-      <div ref="wrapper" style={[style.wrapper, this.props.fullWidth && style.wrapperFullWidth]}>
-        <div ref="value" style={style.value}>
-          { this.props.parse(this.props.value) }
-        </div>
-        { !this.props.fullWidth ? this.renderRemoveBtn() : null}
-      </div>
-    );
-  }
+		return (
+			<div ref={node => this.wrapperEl = node} style={[style.wrapper, this.props.fullWidth && style.wrapperFullWidth]}>
+				<div ref={node => this.valueEl = node} style={style.value}>
+					{ this.props.parse(this.props.value) }
+				</div>
+				{ !this.props.fullWidth ? this.renderRemoveBtn() : null }
+			</div>
+		);
+	}
 }
